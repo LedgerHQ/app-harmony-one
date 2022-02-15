@@ -38,7 +38,7 @@ APP_LOAD_PARAMS = --appFlags 0x40 --path "44'/1023'" --curve secp256k1 $(COMMON_
 APP_SOURCE_PATH = src
 SDK_SOURCE_PATH+= lib_stusb lib_stusb_impl lib_u2f qrcode
 
-ifeq ($(TARGET_NAME),TARGET_NANOX)
+ifneq ($(TARGET_NAME),TARGET_NANOS)
 SDK_SOURCE_PATH  += lib_ux
 DEFINES          += HAVE_UX_FLOW
 endif
@@ -55,15 +55,14 @@ delete:
 # Platform #
 ############
 
-DEFINES += OS_IO_SEPROXYHAL 
+DEFINES += OS_IO_SEPROXYHAL
 DEFINES += HAVE_BAGL HAVE_SPRINTF
 DEFINES += HAVE_IO_USB HAVE_L4_USBLIB IO_USB_MAX_ENDPOINTS=7 IO_HID_EP_LENGTH=64 HAVE_USB_APDU
 DEFINES += APPVERSION=\"$(APPVERSION)\"
 
-ifeq ($(TARGET_NAME),TARGET_NANOX)
+ifneq ($(TARGET_NAME),TARGET_NANOS)
 DEFINES   += IO_SEPROXYHAL_BUFFER_SIZE_B=300
-# BLE
-DEFINES   += HAVE_GLO096 
+DEFINES   += HAVE_GLO096
 DEFINES   += HAVE_BAGL BAGL_WIDTH=128 BAGL_HEIGHT=64
 DEFINES   += HAVE_BAGL_ELLIPSIS # long label truncation feature
 DEFINES   += HAVE_BAGL_FONT_OPEN_SANS_REGULAR_11PX
@@ -80,10 +79,10 @@ DEFINES       += HAVE_WEBUSB WEBUSB_URL_SIZE_B=$(shell echo -n $(WEBUSB_URL) | w
 DEBUG = 0
 ifneq ($(DEBUG),0)
 
-        ifeq ($(TARGET_NAME),TARGET_NANOX)
-                DEFINES   += HAVE_PRINTF PRINTF=mcu_usb_printf
-        else
+        ifeq ($(TARGET_NAME),TARGET_NANOS)
                 DEFINES   += HAVE_PRINTF PRINTF=screen_printf
+        else
+                DEFINES   += HAVE_PRINTF PRINTF=mcu_usb_printf
         endif
 else
         DEFINES   += PRINTF\(...\)=
